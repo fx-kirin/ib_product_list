@@ -21,8 +21,12 @@ from bs4 import BeautifulSoup
 
 SLEEP_TIME = 0.5
 
-def main(company_id):
+def main(company_id, root_path=None):
     session = requests.Session()
+    
+    adapters = requests.adapters.HTTPAdapter(max_retries=3)
+    session.mount("http://", adapters)
+    session.mount("https://", adapters)
     result = session.get('https://www.interactivebrokers.com/en/index.php?f=2222&exch=%s'%(company_id))
     soup = BeautifulSoup(result.content, 'lxml')
     categories = [a.get('id') for a in soup.find(class_='btn-selectors').find_all('a')]
@@ -31,7 +35,10 @@ def main(company_id):
     for category in categories:
         result = session.get('https://www.interactivebrokers.com/en/index.php?f=2222&exch=%s&showcategories=%s'%(company_id, category))
         mkdir_p('./result/%s/'%(company_id))
-        output_path = './result/%s/%s.csv'%(company_id, category)
+        if root_path:
+            output_path = '%s/result/%s/%s.csv'%(root_path, company_id, category)
+        else:
+            output_path = './result/%s/%s.csv'%(company_id, category)
         f = open(output_path, 'w')
         writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
         
