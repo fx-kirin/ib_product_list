@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 
 SLEEP_TIME = 0.5
 
-def main(company_id, root_path=None):
+def main(company_id, root_path=None, category=None):
     session = requests.Session()
     
     adapters = requests.adapters.HTTPAdapter(max_retries=3)
@@ -29,7 +29,10 @@ def main(company_id, root_path=None):
     session.mount("https://", adapters)
     result = session.get('https://www.interactivebrokers.com/en/index.php?f=2222&exch=%s'%(company_id))
     soup = BeautifulSoup(result.content, 'lxml')
-    categories = [a.get('id') for a in soup.find(class_='btn-selectors').find_all('a')]
+    if not category:
+        categories = [a.get('id') for a in soup.find(class_='btn-selectors').find_all('a')]
+    else:
+        categories = [category]
     
     time.sleep(SLEEP_TIME)
     for category in categories:
