@@ -34,10 +34,11 @@ def main(company_id, root_path=None):
     time.sleep(SLEEP_TIME)
     for category in categories:
         result = session.get('https://www.interactivebrokers.com/en/index.php?f=2222&exch=%s&showcategories=%s'%(company_id, category))
-        mkdir_p('./result/%s/'%(company_id))
         if root_path:
-            output_path = '%s/result/%s/%s.csv'%(root_path, company_id, category)
+            mkdir_p('%s/%s/'%(root_path, company_id))
+            output_path = '%s/%s/%s.csv'%(root_path, company_id, category)
         else:
+            mkdir_p('./result/%s/'%(company_id))
             output_path = './result/%s/%s.csv'%(company_id, category)
         f = open(output_path, 'w')
         writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
