@@ -81,6 +81,12 @@ def main(company_id, root_path=None, category=None):
         f.close()
     
 if __name__ == "__main__":
-    logging.basicConfig(format='%(asctime)s|%(threadName)s|%(levelname)s : %(message)s', level=logging.INFO)
+    import ktools
+    import logging
+    import stdlogging
+    
+    ktools.setup_logger(logfile='/tmp/%s.log'%(os.path.basename(__file__)), level=logging.INFO)
+    stdlogging.enable()
+    stderr = ktools.get_stderr_logger()
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     fire.Fire(main)
